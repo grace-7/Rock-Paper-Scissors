@@ -1,11 +1,8 @@
 const options = ['rock', 'paper', 'scissors'];
 
-const ROCK = 'rock'.toLowerCase();
-const PAPER = 'paper'.toLowerCase();
-const SCISSORS = 'scissors'.toLowerCase();
-
-let compWins = 0;
-let tie = 0;
+let playerScore = 0;
+let computerScore = 0;
+let ties = 0;
 
 const rules = {
   'rock': {
@@ -25,20 +22,48 @@ const rules = {
   }
 }
 
-function playRound(playerSelection, computerSelection) {
+document.addEventListener('DOMContentLoaded', () => {
+  const rockButton = document.querySelector("#rock");
+  const paperButton = document.querySelector("#paper");
+  const scissorsButton = document.querySelector("#scissors");
 
-  console.log(playerSelection, computerSelection)
+  rockButton.addEventListener("click", () => {
+    playRound("rock", computerPlay());
+  })
+  paperButton.addEventListener("click", () => {
+    playRound("paper", computerPlay());
+  })
+  scissorsButton.addEventListener("click", () => {
+    playRound("scissors", computerPlay());
+  })
+});
+
+function playRound(playerSelection, computerSelection) {
+  // get the result of who wins
+  // keep track of each player's wins / losses / ties
+  // check if the game is over / update UI
+
   let result = rules[playerSelection][computerSelection];
 
   if (result < 0) {
-    console.log("The computer wins")
-    compWins++;
+    computerScore++;
+    addResultLine("The computer won!");
   } else if (result > 0) {
-    console.log("You win")
+    playerScore++;
+    addResultLine("The player won!");
   } else {
-    console.log("It's a tie!")
-    tie++;
+    ties++;
+    addResultLine("It's a tie!");
   }
+
+  checkGameOver();
+
+}
+
+function checkGameOver() {
+  if (computerScore < 5 && playerScore < 5) return;
+  const winner = winnerString(playerScore >= 5);
+  addResultLine(winner);
 }
 
 function computerPlay(){
@@ -47,35 +72,14 @@ function computerPlay(){
   return selected;
 }
 
-function getUserInput() {
-  let userInput = window.prompt("Rock, paper, or scissors?").toLowerCase();
-  while (!options.includes(userInput)) {
-    userInput = window.prompt("Invalid Input.\n\nRock, paper, or scissors?").toLowerCase();
-  }
-  return userInput;
+function winnerString(playerWon) {
+  if (playerWon) return "You have won the game!";
+
+  return "The Computer wins the game!";
 }
 
-function winner(){
-  if (compWins >= 3 || tie == 3){
-    return "The Computer has bested you! You loose!"
-  }
-  else{
-    return "You have won the game!"
-  }
-
-}
-
-function game(){
-  for (let i = 0; i < 5; i++) {
-    let userInput = getUserInput()
-    let compSelect = computerPlay();
-    playRound(userInput, compSelect);
-  }
-
-  let res = winner();
-  console.log(res)
-
-}
-
-
-game();
+function addResultLine() {
+  const resultsCont = document.querySelector('.results');
+  resultsCont.appendChild(document.createTextNode(result));
+  resultsCont.appendChild(document.createElement("br"));
+} 
